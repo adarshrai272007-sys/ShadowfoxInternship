@@ -1,133 +1,84 @@
-# ShadowfoxInternship
-# AIML Beginner Level Tasks
+# Autocorrect Keyboard System
 
-This repository contains complete beginner-level AIML task solutions.
+This project detects misspelled words in a sentence and provides autocorrection suggestions using Python.
 
-## Projects Included
+## Objective
 
-1. Image Tagging with TensorFlow
-2. Boston House Price Prediction
-3. Autocorrect Keyboard System
+Develop an autocorrect keyboard system that identifies misspelled words in text input and provides correction suggestions.
 
-Each project includes source code, setup instructions, a submission writeup, and a project-specific README.
+The project includes:
 
-## Repository Structure
+- Text input from the user
+- Word tokenization
+- Misspelled word detection
+- Best correction generation
+- Alternative spelling suggestions
+- Corrected sentence output
+
+## Project Structure
 
 ```text
-aiml-beginner-tasks-repository/
+autocorrect-keyboard-system/
   README.md
+  SUBMISSION.md
   requirements.txt
-  .gitignore
-  projects/
-    image-tagging-tensorflow/
-    boston-house-price-prediction/
-    autocorrect-keyboard-system/
+  src/
+    autocorrect.py
+  tests/
+    test_autocorrect.py
 ```
 
-## 1. Image Tagging with TensorFlow
-
-Folder:
-
-```text
-projects/image-tagging-tensorflow/
-```
-
-Objective:
-
-Develop a CNN model for image tagging using TensorFlow.
-
-Main files:
-
-```text
-projects/image-tagging-tensorflow/src/train.py
-projects/image-tagging-tensorflow/src/predict.py
-```
-
-Run:
+## Installation
 
 ```powershell
-cd projects/image-tagging-tensorflow
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
-python src/train.py --data-dir data/images --epochs 10
 ```
 
-## 2. Boston House Price Prediction
+## Run the Project
 
-Folder:
-
-```text
-projects/boston-house-price-prediction/
-```
-
-Objective:
-
-Train regression models to predict house prices using housing attributes.
-
-Main files:
-
-```text
-projects/boston-house-price-prediction/src/train.py
-projects/boston-house-price-prediction/src/predict.py
-```
-
-Run:
+Interactive mode:
 
 ```powershell
-cd projects/boston-house-price-prediction
-pip install -r requirements.txt
-python src/train.py --csv data/BostonHousing.csv
+python src/autocorrect.py --interactive
 ```
 
-If no dataset is available, run:
+Command-line mode:
 
 ```powershell
-python src/train.py
-```
-
-## 3. Autocorrect Keyboard System
-
-Folder:
-
-```text
-projects/autocorrect-keyboard-system/
-```
-
-Objective:
-
-Detect misspelled words and suggest corrections.
-
-Main file:
-
-```text
-projects/autocorrect-keyboard-system/src/autocorrect.py
-```
-
-Run:
-
-```powershell
-cd projects/autocorrect-keyboard-system
-pip install -r requirements.txt
 python src/autocorrect.py --text "I havv a beutiful hous"
 ```
 
-## Installing All Requirements
+Example output:
 
-You can install all common dependencies from the repository root:
-
-```powershell
-pip install -r requirements.txt
+```text
+Corrected text:
+I have a beautiful house
 ```
 
-TensorFlow can take time to install. If you only want to run the non-image tasks first, install the project-specific requirements from those folders.
+## Features
 
-## GitHub Upload Instructions
+- Preserves punctuation and spaces
+- Gives best correction
+- Shows alternative suggestions
+- Handles uppercase words at the beginning of sentences
 
-1. Create a new GitHub repository.
-2. Choose the `Python` `.gitignore` template if GitHub asks.
-3. Upload the contents of this folder.
-4. Keep datasets and trained models out of GitHub unless your instructor specifically asks for them.
 
-## Notes
+## Input Modes
 
-Datasets and trained models are ignored by Git because they can be large or generated locally.
+```powershell
+python src/autocorrect.py --text "I havv a beutiful hous"
+python src/autocorrect.py --interactive
+echo "I havv a beutiful hous" | python src/autocorrect.py
+```
 
+## Limitations
+
+Suggestions are ranked by word frequency without looking at the neighbouring words, so some corrections can be wrong (for example `quik` may become `quit`). The alternative suggestions are shown so the user can pick the right word.
+
+## Tests
+
+```powershell
+python -m pytest -q
+```
