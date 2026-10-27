@@ -1,133 +1,80 @@
 # ShadowfoxInternship
+
 # AIML Beginner Level Tasks
 
-This repository contains complete beginner-level AIML task solutions.
+Complete beginner-level AI/ML task solutions. Every project has runnable source code, tests, a project README and a submission write-up.
 
 ## Projects Included
 
-1. Image Tagging with TensorFlow
-2. Boston House Price Prediction
-3. Autocorrect Keyboard System
-
-Each project includes source code, setup instructions, a submission writeup, and a project-specific README.
+1. [Image Tagging with TensorFlow](image-tagging-tensorflow/)
+2. [Boston House Price Prediction](boston-house-price-prediction/)
+3. [Autocorrect Keyboard System](autocorrect-keyboard-system/)
 
 ## Repository Structure
 
 ```text
-aiml-beginner-tasks-repository/
+ShadowfoxInternship/
   README.md
   requirements.txt
   .gitignore
-  projects/
-    image-tagging-tensorflow/
-    boston-house-price-prediction/
-    autocorrect-keyboard-system/
+  .github/workflows/tests.yml
+  image-tagging-tensorflow/
+    src/  train.py  predict.py  make_demo_dataset.py  download_dataset.py
+    tests/  README.md  SUBMISSION.md  requirements.txt  data/  models/
+  boston-house-price-prediction/
+    src/  train.py  predict.py
+    tests/  README.md  SUBMISSION.md  requirements.txt  data/  models/
+  autocorrect-keyboard-system/
+    src/  autocorrect.py
+    tests/  README.md  SUBMISSION.md  requirements.txt
 ```
 
-## 1. Image Tagging with TensorFlow
-
-Folder:
-
-```text
-projects/image-tagging-tensorflow/
-```
-
-Objective:
-
-Develop a CNN model for image tagging using TensorFlow.
-
-Main files:
-
-```text
-projects/image-tagging-tensorflow/src/train.py
-projects/image-tagging-tensorflow/src/predict.py
-```
-
-Run:
+## Quick Start
 
 ```powershell
-cd projects/image-tagging-tensorflow
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
-python src/train.py --data-dir data/images --epochs 10
 ```
 
-## 2. Boston House Price Prediction
-
-Folder:
-
-```text
-projects/boston-house-price-prediction/
-```
-
-Objective:
-
-Train regression models to predict house prices using housing attributes.
-
-Main files:
-
-```text
-projects/boston-house-price-prediction/src/train.py
-projects/boston-house-price-prediction/src/predict.py
-```
-
-Run:
+### 1. Image Tagging with TensorFlow
 
 ```powershell
-cd projects/boston-house-price-prediction
-pip install -r requirements.txt
-python src/train.py --csv data/BostonHousing.csv
+cd image-tagging-tensorflow
+python src/make_demo_dataset.py            # tiny synthetic shapes dataset (smoke test)
+python src/train.py --data-dir data/images --epochs 15
+python src/predict.py --image data/images/squares/squares_000.png
 ```
 
-If no dataset is available, run:
+For real photos run `python src/download_dataset.py` (TensorFlow flower photos, ~220 MB) or put your own folders in `data/images/<class_name>/`.
+Training saves the model, class names, `outputs/metrics.json`, `outputs/training_curves.png` and `outputs/confusion_matrix.png`.
+
+### 2. Boston House Price Prediction
 
 ```powershell
-python src/train.py
+cd boston-house-price-prediction
+python src/train.py --csv data/BostonHousing.csv --tune --cv 5
+python src/predict.py --features "{\"RM\": 6.5, \"CRIM\": 0.2, \"TAX\": 300, \"PTRATIO\": 15, \"DIS\": 4.0}"
 ```
 
-## 3. Autocorrect Keyboard System
+Without a CSV, `python src/train.py` uses a synthetic demo dataset (a pipeline check only, not real accuracy).
 
-Folder:
-
-```text
-projects/autocorrect-keyboard-system/
-```
-
-Objective:
-
-Detect misspelled words and suggest corrections.
-
-Main file:
-
-```text
-projects/autocorrect-keyboard-system/src/autocorrect.py
-```
-
-Run:
+### 3. Autocorrect Keyboard System
 
 ```powershell
-cd projects/autocorrect-keyboard-system
-pip install -r requirements.txt
+cd autocorrect-keyboard-system
 python src/autocorrect.py --text "I havv a beutiful hous"
+python src/autocorrect.py --interactive
 ```
 
-## Installing All Requirements
-
-You can install all common dependencies from the repository root:
+## Run the Tests
 
 ```powershell
-pip install -r requirements.txt
+cd autocorrect-keyboard-system; python -m pytest -q
+cd ..\boston-house-price-prediction; python -m pytest -q
+cd ..\image-tagging-tensorflow; python -m pytest -q
 ```
-
-TensorFlow can take time to install. If you only want to run the non-image tasks first, install the project-specific requirements from those folders.
-
-## GitHub Upload Instructions
-
-1. Create a new GitHub repository.
-2. Choose the `Python` `.gitignore` template if GitHub asks.
-3. Upload the contents of this folder.
-4. Keep datasets and trained models out of GitHub unless your instructor specifically asks for them.
 
 ## Notes
 
-Datasets and trained models are ignored by Git because they can be large or generated locally.
-
+Datasets, trained models and result files are generated locally and ignored by Git (see `.gitignore`).
