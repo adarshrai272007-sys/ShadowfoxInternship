@@ -1,46 +1,47 @@
-"""
-Autocorrect Keyboard System
-
-This script identifies misspelled words and provides correction suggestions.
-
-Interactive mode:
-    python src/autocorrect.py
-
-Command-line mode:
-    python src/autocorrect.py --text "I havv a beutiful hous"
-"""
+"""Suggest and apply spelling corrections to text."""
 
 import argparse
 import re
+import sys
 
 from spellchecker import SpellChecker
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Autocorrect misspelled words in text.")
-    parser.add_argument("--text", default=None, help="Text to autocorrect.")
+    parser = argparse.ArgumentParser(
+        description="Autocorrect misspelled words in text."
+    )
+    parser.add_argument("--text", help="Text to autocorrect.")
+    parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Prompt for text when --text is not supplied.",
+    )
     return parser.parse_args()
 
 
 def tokenize(text):
-    return re.findall(r"[A-Za-z]+|[^A-Za-z]", text)
+    """Split text into words and separators without changing punctuation."""
+    return re.findall(r"[A-Za-z]+|[^A-Za-z]+", text)
 
 
 def preserve_case(original_word, corrected_word):
     if original_word.isupper():
         return corrected_word.upper()
-    if original_word[0].isupper():
+    if original_word.istitle():
         return corrected_word.capitalize()
     return corrected_word
 
 
-def autocorrect_text(text):
-    spell_checker = SpellChecker()
-    tokens = tokenize(text)
+def autocorrect_text(text, spell_checker=None):
+    """Return corrected text and suggestions keyed by the misspelled word."""
+    if spell_checker is None:
+        spell_checker = SpellChecker()
+
     corrected_tokens = []
     suggestions = {}
 
-    for token in tokens:
+    for token in tokenize(text):
         if not token.isalpha():
             corrected_tokens.append(token)
             continue
@@ -52,25 +53,22 @@ def autocorrect_text(text):
 
         best_correction = spell_checker.correction(lower_token) or lower_token
         alternatives = sorted(spell_checker.candidates(lower_token) or [])
-
         suggestions[token] = {
             "best_correction": best_correction,
             "alternatives": alternatives[:5],
         }
-
         corrected_tokens.append(preserve_case(token, best_correction))
 
     return "".join(corrected_tokens), suggestions
 
 
 def print_results(original_text, corrected_text, suggestions):
-    print("\nOriginal text:")
+    print("Original text:")
     print(original_text)
-
     print("\nCorrected text:")
     print(corrected_text)
-
     print("\nSuggestions:")
+
     if not suggestions:
         print("No spelling mistakes found.")
         return
@@ -85,16 +83,25 @@ def print_results(original_text, corrected_text, suggestions):
 def main():
     args = parse_args()
 
-    if args.text:
+    if args.text is not None:
         text = args.text
-    else:
+    elif args.interactive:
         print("Autocorrect Keyboard System")
-        text = input("Enter text: ")
+        try:
+            text = input("Enter text: ")
+        except EOFError:
+            print("No input received.", file=sys.stderr)
+            return 1
+    elif not sys.stdin.isatty():
+        text = sys.stdin.read()
+    else:
+        print("Provide --text, pipe text to this command, or use --interactive.")
+        return 2
 
     corrected_text, suggestions = autocorrect_text(text)
     print_results(text, corrected_text, suggestions)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
-
+    raise SystemExit(main())
